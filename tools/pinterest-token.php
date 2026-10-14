@@ -21,18 +21,10 @@ if (PHP_SAPI !== 'cli') {
 
 const SCOPES = 'boards:read,boards:write,pins:read,pins:write,user_accounts:read';
 
-function ask(string $label, bool $hidden = false): string
+function ask(string $label): string
 {
     echo $label;
-    if ($hidden) {
-        shell_exec('stty -echo');
-    }
-    $value = trim((string) fgets(STDIN));
-    if ($hidden) {
-        shell_exec('stty echo');
-        echo "\n";
-    }
-    return $value;
+    return trim((string) fgets(STDIN));
 }
 
 function api(string $method, string $url, array $headers, ?string $body = null): array
@@ -61,7 +53,7 @@ echo "\n=== Pinterest token helper ===\n";
 echo "Find these at developers.pinterest.com -> My apps -> (your app) -> Manage.\n\n";
 
 $appId    = ask('App ID: ');
-$secret   = ask('App secret (hidden while typing): ', true);
+$secret   = ask('App secret (it will show on screen; clear it at the end): ');
 $redirect = ask('Redirect URI (exactly as listed in the app settings): ');
 
 if ($appId === '' || $secret === '' || $redirect === '') {
@@ -132,4 +124,4 @@ if ($bStatus === 200 && !empty($boards['items'])) {
 echo "Copy these into config.local.php (use nano, not File Manager):\n\n";
 echo "ACCESS TOKEN:\n{$access}\n\n";
 echo "REFRESH TOKEN:\n{$refresh}\n\n";
-echo "Then clear the screen with:  clear\n";
+echo "When done, clear the screen and history with:  clear && history -c && history -w\n";
